@@ -43,7 +43,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">发送对象</label>
                     <div class="layui-inline">
-                        <input type="text" name="toUser" lay-verify="required" lay-reqtext="信息" placeholder="工号"
+                        <input type="text" name="toUser" lay-verify="required|number" lay-reqtext="信息" placeholder="工号"
                                autocomplete="off" class="layui-input">
                     </div>
                 </div>
@@ -51,7 +51,6 @@
                     <label class="layui-form-label">发送频道</label>
                     <div class="layui-input-block">
                         <select name="messageType" lay-filter="aihao">
-                            <option value=""></option>
                             <option value="3506000001" selected="">通知</option>
                             <option value="3507000001">广东销售支持</option>
                             <option value="4402999911">东莞专区</option>
@@ -197,17 +196,35 @@
                         , btn: ['确认', '取消']
                         , yes: function (index, layero) {
                             //按钮【按钮一】的回调
-                            $.post('${pageContext.request.contextPath}/admin/pushOneMessage', data.field, function (result) {
-                                layer.close(index);
-                                if (result.success == 1) {
-                                    //发送成功
-                                    layer.msg('发送成功');
-                                    return false;
-                                } else {
-                                    layer.msg('发送失败');
+                            $.ajax({
+                                url:'${pageContext.request.contextPath}/admin/pushOneMessage'
+                                ,data:data.field
+                                ,type:'post'
+                                ,success:function (result) {
+                                    layer.close(index);
+                                    if (result.success == 1) {
+                                        //发送成功
+                                        layer.msg('发送成功');
+                                        return false;
+                                    } else {
+                                        layer.msg('发送失败');
+                                    }
                                 }
-
-                            }, 'json')
+                                ,complete:function (xhr, status){
+                                    let REDIRECT = xhr.getResponseHeader("REDIRECT");
+                                    console.log(REDIRECT);
+                                    if(REDIRECT==='REDIRECT')
+                                    {
+                                        var timeout = 3;
+                                        layer.msg('登录过期，即将返回登录页面', {
+                                            icon: 1,
+                                            time: 3000 //2秒关闭（如果不配置，默认是3秒）
+                                        }, function(){
+                                            window.location.href = xhr.getResponseHeader("CONTEXTPATH");
+                                        });
+                                    }
+                                }
+                            })
                             layer.close(index);
                         }
                         , btn2: function (index, layero) {
