@@ -59,7 +59,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="layui-form-item">
+                <div class="layui-form-item layui-hide">
                     <label class="layui-form-label">信息形式</label>
                     <div class="layui-input-block">
                         <input type="radio" name="contentType" value="text" title="文本" checked="">
