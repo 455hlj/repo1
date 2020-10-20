@@ -31,9 +31,9 @@ public class CloudMessage implements Serializable {
     }
 
     public static String[] FIELDSARR = new String[]{"MessageType","MessageContent","ToUser",
-            "MessageTitle","Copy","ContentType"};
+            "MessageTitle","Copy"};
     public static String[]  FIELDSNAME = new String[]{"发送频道","信息内容","发送对象",
-       "信息标题","是否可复制","信息形式"};
+       "信息标题","是否可复制"};
 
     public String getMessageType() {
         return messageType;

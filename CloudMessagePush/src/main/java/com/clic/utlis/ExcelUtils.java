@@ -25,7 +25,7 @@ public class ExcelUtils {
     private static String EXCEL_XLS = ".xls";
     private static String EXCEL_XLSX = ".xlsx";
     public static String feedBack = "";
-
+    private static int HEADER = 1;
     public String getFeedBack() {
         return feedBack;
     }
@@ -40,6 +40,7 @@ public class ExcelUtils {
      * @return:
      */
     public static ArrayList<CloudMessage> getExcelContent(File file) throws FileException,IOException {
+
 
 
         ArrayList<CloudMessage> list = new ArrayList<CloudMessage>();
@@ -62,18 +63,22 @@ public class ExcelUtils {
                 //先解析头部
                 //
                 Map<String,String> mapper = new HashMap<String ,String>();
-                Row row1 = sheet.getRow(0);
+                //第一行隐藏了校验规则，从第二行开始算表头。
+                Row row1 = sheet.getRow(HEADER);
                 System.out.println(row1.getLastCellNum());
 
                 //得到表头 ，包括表头的行数。一般来说是6.
                 for (int i = 0; i < row1.getLastCellNum(); i++)
                 {
                     Cell cell = row1.getCell(i);
+                    if(cell==null)
+                    {break;}
                     CellReference cellRef = new CellReference(row1.getRowNum(), cell.getColumnIndex());
 
                     //A1 B2
                     String cellRefString = cellRef.formatAsString();
                     String header = formatter.formatCellValue(cell);
+
                     //得到列的英文，以(A,字段名)的形式存入map，表示pojo对应的字段,之后取出反射set方法
                     String column = cellRefString.substring(0, 1);
 
@@ -99,19 +104,21 @@ public class ExcelUtils {
                 Row row=null;
                 System.out.println(sheet.getLastRowNum());
                 //不要用(foreach)
-                outer:for(int rowNum =1;rowNum<sheet.getLastRowNum();rowNum++) {
+                outer:for(int rowNum =HEADER+1;rowNum<sheet.getLastRowNum();rowNum++) {
 
                     row= sheet.getRow(rowNum);
                     CloudMessage cloudMessage =  new CloudMessage();
                     Cell cell=null ;
-
-                    for(int cellColumn=0;cellColumn<row1.getLastCellNum();cellColumn++){
+                    System.out.println(row.getLastCellNum());
+                    for(int cellColumn=0;cellColumn<row.getLastCellNum();cellColumn++){
                    //for (Cell cell : row) {
                         //A1 B2等代表单元格位置的
                         cell = row.getCell(cellColumn);
+                        if(cell==null)
+                        {break;}
                         CellReference cellRef = new CellReference(row.getRowNum(), cell.getColumnIndex());
 
-                        System.out.print(cellRef.formatAsString());
+                        //System.out.print(cellRef.formatAsString());
                         String fieldRef = cellRef.formatAsString().substring(0,1);
                         String fieldName = mapper.get(fieldRef);
                         //得到单元格内容，先输出未格式化的内容
@@ -139,7 +146,6 @@ public class ExcelUtils {
                     stringBuilder.append("信息标题:\t"+cloudMessage.getMessageTitle()+"\r\n");
                     stringBuilder.append("发送对象:\t"+cloudMessage.getToUser()+"\r\n");
                     stringBuilder.append("发送频道:\t"+cloudMessage.getMessageType()+"\r\n");
-                    stringBuilder.append("发送形式:\t"+cloudMessage.getContentType()+"\r\n");
                     stringBuilder.append("是否可复制:\t"+cloudMessage.getCopy()+"\r\n");
                     stringBuilder.append("信息内容:\t"+cloudMessage.getMessageContent()+"\r\n");
                     stringBuilder.append("-------------------------------------\r\n");
