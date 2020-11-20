@@ -1,0 +1,29 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /quick
+spring:
+  profiles:
+   active: dev
+    #active:
+#server[port: 8080,servlet{context-path: /quick}]
+---
+server:
+  port: 8081
+spring:
+  profiles: dev
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/demo1?usersuseSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/demo2?serverTimezone=GMT%2B8
+    username: root
+    password: hlj.2455
+#  security:
+#    user:
+#      name: root
+#      password: hlj.2455
+---
+server:
+  port: 8082
+spring:
+  profiles: product

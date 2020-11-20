@@ -93,6 +93,9 @@
         });*/
 
         // 进行登录操作
+        <%="fuck "%>
+        <% String a = "fuck"; %>
+        <%=a%>
         form.on('submit(login)', function (data) {
             data = data.field;
             if (data.username == '') {
